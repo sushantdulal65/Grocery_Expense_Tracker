@@ -1,0 +1,7 @@
+2|Tomato|30|Sushatn|2
+1|Spinach|30|Roshan|3
+3|potato'|5|sushatn|3
+1|Mithai|22|Sushant|22
+2|Tomato|35|Roshan|2
+2|T-Shirt|20|Sushant|2
+2|T-Shirt|20|Sushant|1
