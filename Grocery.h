@@ -83,6 +83,7 @@ public:
     }
     void displayGrocery() const;
     void editGrocery();
+    bool isEmpty() const;
     friend istream &operator>>(istream &, Grocery &); // overloading the >> operator
 
    

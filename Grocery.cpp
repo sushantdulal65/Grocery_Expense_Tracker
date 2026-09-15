@@ -62,3 +62,12 @@ using namespace std;
          }  
               
     }
+
+// A function to check if a grocery is empty. Logic: empty grocery has receipt no. 0
+
+bool Grocery::isEmpty() const
+    {
+        if (receipt_no==0)
+            return 1;
+        return 0;
+    }
