@@ -1,0 +1,39 @@
+overloading the <<(stream insertion operator) and >>(stream extraction operator) operators
+
+Overloading the stream objects is very difficult. For overloading this function:
+ostream &operator <<(ostream &strm,FeetInches &obj) // This is the beginning line, other part remember or understand
+in your head. 
+
+File Handling
+I looked how to read, write into a file 
+I recall that fstream header is necessary 
+It has three classes:
+ifstream
+ofstream
+fstream
+
+```cpp
+#include <fstream>
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main()
+{
+    ofstream outputFile;
+    outputFile.open("Try.txt", ios::out);
+    outputFile << "What do you say" << endl;
+    outputFile << "I love you ";
+    outputFile.close();
+
+    ifstream Myfile("Try.txt");
+    string text;
+    while (getline(Myfile,text)){
+        cout << text << endl;
+    }
+    Myfile.close();
+    
+
+    return 0;
+}
+```
