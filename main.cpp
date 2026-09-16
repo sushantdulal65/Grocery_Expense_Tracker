@@ -24,16 +24,17 @@ int main()
     cout << "1. Grocery Entry" << endl;
     cout << "2. Grocery Display" << endl;
     cout << "3. Edit Grocery" << endl;
-    cout << "4. Exit the Program" << endl
+    cout << "4. Delete Grocery" << endl;
+    cout << "5. Exit the Program" << endl
          << endl;
 
-    // Ask User for choice between 1 and 4
+    // Ask User for choice between 1 and 5
     cout << endl
-         << "Choose a number between 1 and 4: ";
+         << "Choose a number between 1 and 5: ";
     cin >> choice;
 
     // if User chooses 4, terminate
-    if (choice!=1 && choice!=2 && choice!=3)
+    if (choice != 1 && choice != 2 && choice != 3 && choice != 4)
     {
         cout << "Program closed.";
         return 0;
@@ -113,7 +114,10 @@ int main()
             {
                 cout << "Which grocery do you want to display? Enter the receipt no.";
                 cin >> i;
-                g[i].displayGrocery();
+                if (!g[i].isEmpty())
+                    g[i].displayGrocery();
+                else
+                    cout << "Grocery doesn't exist. Back to choices again." << endl;
             }
         }
 
@@ -121,18 +125,48 @@ int main()
         {
             cout << "Which grocery do you want to edit? Enter the receipt no.";
             cin >> i;
-            g[i].editGrocery();
+            if (!g[i].isEmpty())
+                g[i].editGrocery();
+            else
+                cout << "Grocery doesn't exist. Back to choices again." << endl;
         }
 
-        else if (choice==4)
+        else if (choice == 4)
+        {
+            int ch;
+            cout << "Do you want to delete whole list(1) or a particular grocery.(0)" << endl;
+            cin >> ch;
+            if (ch == 1)
+            {
+                for (int i = 1; i <= max_index; i++)
+                {
+                    if (!g[i].isEmpty())
+                        g[i].deleteGrocery();
+                }
+            }
+            else
+            {
+                cout << "Which grocery do you want to delete? Enter the receipt no.";
+                cin >> i;
+                if (!g[i].isEmpty())
+                {
+                    g[i].deleteGrocery();
+                    cout << "Grocery deleted successfully." << endl;
+                }
+                else
+                    cout << "Grocery doesn't exist. Back to choices again." << endl;
+            }
+        }
+        else if (choice == 5)
         {
             // OPENING FILE AS A OPEN MODE TO MAKE EDITS IN THE PROGRAM AFTER THE PROGRAM RUNS
             file.open("Grocery_Record.txt", ios::out);
             for (i = 1; i <= max_index; i++)
             {
-                if(!g[i].isEmpty()){
-                file << g[i].getReceiptNo() << "|" << g[i].getItemName() << "|" << g[i].getAmount() << "|"
-                     << g[i].getPayer() << "|" << g[i].getSharedNoOfPeople() << endl;
+                if (!g[i].isEmpty())
+                {
+                    file << g[i].getReceiptNo() << "|" << g[i].getItemName() << "|" << g[i].getAmount() << "|"
+                         << g[i].getPayer() << "|" << g[i].getSharedNoOfPeople() << endl;
                 }
             }
             cout << "Program closed.";
@@ -143,7 +177,8 @@ int main()
         cout << "1. Grocery Entry" << endl;
         cout << "2. Grocery Display" << endl;
         cout << "3. Edit Grocery" << endl;
-        cout << "4. Exit the Program" << endl
+        cout << "4. Delete Grocery" << endl;
+        cout << "5. Exit the Program" << endl
              << endl;
         cout << endl
              << "Choose a number between 1 and 4: ";

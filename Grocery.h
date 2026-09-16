@@ -83,6 +83,10 @@ public:
     }
     void displayGrocery() const;
     void editGrocery();
+
+    // a function that allows the user to delete a particular grocery or
+    // entire grocery based on the requirement
+    void deleteGrocery(); 
     bool isEmpty() const;
     friend istream &operator>>(istream &, Grocery &); // overloading the >> operator
 

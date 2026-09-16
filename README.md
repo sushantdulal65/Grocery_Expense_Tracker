@@ -151,3 +151,13 @@ The problem I see here is that when I try to display record, it asks for receipt
 
 I found a way to display whole record.
 But, I have a problem. If i enter a receipt no directly 8, my display grocery will run from 1 until the max index which is 8. So, i will create a function that checks if grocery is_empty. I required to check the emptiness once, which will also be done by this function as well.
+
+Ok, now I guess its time to add a feature that allows the user to delete grocery as well.
+
+Problems I see now:
+
+1. If the grocery is not present at all, it allows me to edit grocery, which should be disallowed. Same case with display grocery as well.
+2. Lets see if we get something if i miss say amount i mean if i do not enter amount will it be stored in the file or not
+
+I guess I solved both the problems because now i check before running editgrocery or displaygrocery.
+Also, i cannot leave empty while giving input bro so number 2 is also fine.
