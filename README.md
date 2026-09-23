@@ -161,3 +161,43 @@ Problems I see now:
 
 I guess I solved both the problems because now i check before running editgrocery or displaygrocery.
 Also, i cannot leave empty while giving input bro so number 2 is also fine.
+
+Now, I would like to add calendar features to my Grocery project.
+I want to make my grocery project track when the user entered a particular grocery. And, also later I can add features that allow me to handle or numerical compute the data. I guess I need to change my grocery expense tracker to food grocery expense tracker cause when i read later as well.
+
+So, I am working on adding calendar feature to my grocery and eventually show the portion to each individual about how much they owe like splitwise.
+
+How to add system's date and time in display in c++. Answer from google.
+
+```c++
+#include <iostream>
+#include <chrono>
+
+int main() {
+    // Get the current system zone time
+    auto now = std::chrono::system_clock::now();
+
+    std::cout <<now <<endl;              
+    return 0;
+}
+```
+
+08-21:
+OK, Now I see I am working on figuring out how to time grocery entry and figure out a way to manipulate the entry on the basis of. Be clear:
+
+Example: I can sort out the grocery entry in August. Let this be my way. No, nothing about sorting for now. So what is the next step. Stop this project for now and think of a different project without beautifying this project. You need to add features of calorie and lot into it.
+
+Forget about everything for now and lets jump into another category:
+
+## Chunk 2: Splitwise
+
+I already have a lot of data. I have the grocery information. Now, what I want to do is I want to use to payer and number of payer information to calculate how much the payer is owed. For example: $5 for Potato paid by Sushant and split into 3 people makes Sushant to be owed (3-1)*5/3
+(shared_no_of_people-1)*(amount)/(shared_no_of_people) ok this is the formula
+how do i use variable_name
+I guess I need a new file for this for individual person and also may be a different class
+Say it Person inherited(need to determine if hasa or isa or any other relationship) from the Grocery class.
+alright now there should be Person object that has attributes owes, is owed. OK.
+
+Ok forget everything now, i plan to add a member variable shared_with which is a vector of strings and i choose to drop shared_no_of_people because i need to update it everytime i add a person which can easily be calculated from shared_with.size().
+
+Checking my vector knowledge

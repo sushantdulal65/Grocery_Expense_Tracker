@@ -15,6 +15,7 @@ istream& operator>>(istream& strm, Grocery &obj)
     strm >> obj.payer;
     cout << "How many number of people is this expense shared with? ";
     strm >> obj.shared_no_of_people;
+    obj.date_added = chrono::system_clock::now();
     return strm;
 }
 
@@ -26,6 +27,9 @@ void Grocery::displayGrocery() const
     cout << "Amont: " << amount << endl;
     cout << "Paid By: " << payer << endl;
     cout << "Shared By: " << shared_no_of_people << " people" << endl;
+    // Convert time_point to time_t, then to readable string
+    time_t t = chrono::system_clock::to_time_t(date_added);
+    cout << "Date Added: " << ctime(&t);
 }
 
 void Grocery::editGrocery()

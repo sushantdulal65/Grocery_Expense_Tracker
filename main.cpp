@@ -6,6 +6,7 @@
 #include <string>
 #include <fstream>
 #include "Grocery.h"
+using namespace std;
 
 int main()
 {
@@ -33,7 +34,7 @@ int main()
          << "Choose a number between 1 and 5: ";
     cin >> choice;
 
-    // if User chooses 4, terminate
+    // if User chooses 5, terminate
     if (choice != 1 && choice != 2 && choice != 3 && choice != 4)
     {
         cout << "Program closed.";
@@ -59,9 +60,9 @@ int main()
     if (file)
     {
         int index;
-        string receipt, item, amount, payer, shared; // a string that hold the individuals tokens.
+        string receipt, item, amount, payer, shared,time; // a string that hold the individuals tokens.
         while (getline(file, receipt, '|') && getline(file, item, '|') &&
-               getline(file, amount, '|') && getline(file, payer, '|') && getline(file, shared))
+               getline(file, amount, '|') && getline(file, payer, '|') && getline(file, shared, '|') && getline(file,time))
         {
 
             index = stoi(receipt);
@@ -72,6 +73,7 @@ int main()
             g[index].setAmount(stoi(amount));
             g[index].setPayer(payer);
             g[index].setSharedNoOfPeople(stoi(shared));
+            g[index].setDateAdded(stoll(time));
         }
     }
     file.close();
@@ -166,7 +168,7 @@ int main()
                 if (!g[i].isEmpty())
                 {
                     file << g[i].getReceiptNo() << "|" << g[i].getItemName() << "|" << g[i].getAmount() << "|"
-                         << g[i].getPayer() << "|" << g[i].getSharedNoOfPeople() << endl;
+                         << g[i].getPayer() << "|" << g[i].getSharedNoOfPeople() <<"|" << chrono::system_clock::to_time_t(g[i].getDateAdded()) << endl;
                 }
             }
             cout << "Program closed.";
@@ -181,7 +183,7 @@ int main()
         cout << "5. Exit the Program" << endl
              << endl;
         cout << endl
-             << "Choose a number between 1 and 4: ";
+             << "Choose a number between 1 and 5: ";
         cin >> choice;
     }
     // is there a way i could store this whole array into a file, and load the array at the beginning in a append or input mode
