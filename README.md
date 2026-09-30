@@ -200,4 +200,17 @@ alright now there should be Person object that has attributes owes, is owed. OK.
 
 Ok forget everything now, i plan to add a member variable shared_with which is a vector of strings and i choose to drop shared_no_of_people because i need to update it everytime i add a person which can easily be calculated from shared_with.size().
 
-Checking my vector knowledge
+Checking my vector knowledge.
+
+Ok, Now I am facing a problem with file handling in order to store the members of shared_with. The getline(file, var_name, 'delimiter|') helps to only get a string "" which is a vector of shared names. Now I have to figure out to split that string object using the delimiter , and store it.
+As I had done in the string exercise, I recall using .find() and substr() in order to deal with this issue.
+There was a new data type here again size_t which is a integer type commonly used for things like string length, array size. string::npos is returned by find() if a string is not found here. In this case, this data type comes handy.
+I will do this program in the concepts_I_revisited portion.
+
+9/29/2026
+
+I am back after a long time. Let me figure out where did I left off, because I have no idea where I left off.
+
+Now, I have successfully deployed the shared_with list onto my app.
+
+NEXT TASK: FIGURE OUT A WAY TO MAKE OWES AND IS_OWED WORKING

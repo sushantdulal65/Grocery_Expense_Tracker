@@ -1,4 +1,6 @@
-// I have been confused by using Grocery.cpp, so i will now have three files, header file,
+// Author Sushant Dulal
+
+//I have been confused by using Grocery.cpp, so i will now have three files, header file,
 // implementaion file, and source file
 // i am unsure if the terms i have used are correct or not
 
@@ -7,6 +9,14 @@
 #include <fstream>
 #include "Grocery.h"
 using namespace std;
+
+// a function that will separate tokens from a string into a vector of string
+// s is the big string, delimiter is the character that separates the tokens,
+// tokens is the vector that will store individual tokens separately,
+// for example: "Ram,Hari,Sita" -- This whole string is s,',' is delimiter, and
+// Ram  Hari and Sita are the tokens.
+
+void split(const string& s, char delim, vector<string>& tokens);
 
 int main()
 {
@@ -60,19 +70,21 @@ int main()
     if (file)
     {
         int index;
+        vector<string> v; //a vector that will hold the members of shared with
         string receipt, item, amount, payer, shared,time; // a string that hold the individuals tokens.
         while (getline(file, receipt, '|') && getline(file, item, '|') &&
                getline(file, amount, '|') && getline(file, payer, '|') && getline(file, shared, '|') && getline(file,time))
         {
-
             index = stoi(receipt);
             if (index > max_index)
                 max_index = index;
+            
+            split(shared,',',v);
             g[index].setReceiptNo(index);
             g[index].setItemName(item);
             g[index].setAmount(stoi(amount));
             g[index].setPayer(payer);
-            g[index].setSharedNoOfPeople(stoi(shared));
+            g[index].setSharedWith(v);
             g[index].setDateAdded(stoll(time));
         }
     }
@@ -167,8 +179,17 @@ int main()
             {
                 if (!g[i].isEmpty())
                 {
+                    string combined_names = "";
+                    //converting those vectors to string split with comma
+                    for(string s: g[i].getSharedWith())
+                    {   
+                        if(combined_names=="")
+                            {combined_names+=s;
+                            continue;}
+                        combined_names = combined_names + ","+s;
+                    }
                     file << g[i].getReceiptNo() << "|" << g[i].getItemName() << "|" << g[i].getAmount() << "|"
-                         << g[i].getPayer() << "|" << g[i].getSharedNoOfPeople() <<"|" << chrono::system_clock::to_time_t(g[i].getDateAdded()) << endl;
+                         << g[i].getPayer() << "|" << combined_names <<"|" << chrono::system_clock::to_time_t(g[i].getDateAdded()) << endl;
                 }
             }
             cout << "Program closed.";
@@ -189,4 +210,45 @@ int main()
     // is there a way i could store this whole array into a file, and load the array at the beginning in a append or input mode
     file.close();
     return 0;
+}
+
+void split(const string& s, char delim, vector<string>& tokens)
+{
+    int tokenStart = 0; // Starting position of the next token
+
+    //Find the first occurence of the delimiter.
+    int delimPosition = s.find(delim);
+
+    // While we haven't run out of delimiters...
+    while(delimPosition != string::npos)
+    {
+        //Extract the token.
+        string tok = s.substr(tokenStart, delimPosition - tokenStart);
+
+        //Push the token onto the tokens vector.
+        tokens.push_back(tok);
+
+        //Move delimPosition to the next character position.
+        delimPosition++;
+
+        //Move tokenStart to delmiPosition.
+        tokenStart = delimPosition;
+
+        //Find the next occurence of the delimiter.
+        delimPosition = s.find(delim,delimPosition);
+
+
+        //if no more delimiters, extract the last token.
+        if(delimPosition == string::npos)
+        {
+            //Extract the token.
+            string tok = s.substr(tokenStart, delimPosition - tokenStart);
+
+            //Push the token onto the vector.
+            tokens.push_back(tok);
+        }
+
+    }
+
+
 }
