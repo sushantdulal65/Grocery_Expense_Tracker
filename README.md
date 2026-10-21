@@ -214,3 +214,9 @@ I am back after a long time. Let me figure out where did I left off, because I h
 Now, I have successfully deployed the shared_with list onto my app.
 
 NEXT TASK: FIGURE OUT A WAY TO MAKE OWES AND IS_OWED WORKING
+
+Wait a minute on that task. Something is wrong.
+
+For some reason, there was gapping problem in shared_with display which I resolved using include iomanip
+
+Another big problem, while I run displaygrocery, it adds the shared_with list with the list of people in previous receipts in every run. If I don't run displaygrocery, there is no such problem.

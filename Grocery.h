@@ -3,6 +3,8 @@
 
 // Author Sushant Dulal
 
+// header file for Grocery.h
+
 #include <chrono>
 #include <iostream>
 #include <string>
@@ -102,8 +104,7 @@ public:
     void displayGrocery() const;
     void editGrocery();
 
-    // a function that allows the user to delete a particular grocery or
-    // entire grocery based on the requirement
+    // a function that allows the user to delete a particular grocery or entire grocery based on the requirement
     void deleteGrocery();
 
     bool isEmpty() const;

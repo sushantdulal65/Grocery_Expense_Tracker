@@ -1,8 +1,6 @@
 // Author Sushant Dulal
 
-//I have been confused by using Grocery.cpp, so i will now have three files, header file,
-// implementaion file, and source file
-// i am unsure if the terms i have used are correct or not
+// source file for Grocery class
 
 #include <iostream>
 #include <string>
@@ -10,25 +8,23 @@
 #include "Grocery.h"
 using namespace std;
 
-// a function that will separate tokens from a string into a vector of string
-// s is the big string, delimiter is the character that separates the tokens,
-// tokens is the vector that will store individual tokens separately,
-// for example: "Ram,Hari,Sita" -- This whole string is s,',' is delimiter, and
-// Ram  Hari and Sita are the tokens.
+//******************************************************************************
+//* a function that will separate tokens from a string into a vector of string *
+//* s is the big string, delimiter is the character that separates the tokens, *
+//* tokens is the vector that will store individual tokens separately,         *
+//* for example: "Ram,Hari,Sita" --This whole string is s,',' is delimiter,and *
+//* Ram  Hari and Sita are the tokens.                                         *
+//******************************************************************************
 
 void split(const string& s, char delim, vector<string>& tokens);
 
 int main()
 {
 
-    int choice; // A Variable that asks user to choose between 4 choices in the program
-
-    // Simply congratulating me for taking step into crating a project
-    cout << "\nHey sushant!! Congratulations for working on this project" << endl;
+    int choice;        // A Variable that asks user to choose between 4 choices in the program     
 
     // Welcome Screen
-    cout << "Welcome to Grocery Expense Tracker.\n"
-         << endl;
+    cout << "Welcome to Grocery Expense Tracker.\n\n";
 
     // Choices Display for User
     cout << "--------------------Choices-----------------------------------" << endl;
@@ -36,15 +32,13 @@ int main()
     cout << "2. Grocery Display" << endl;
     cout << "3. Edit Grocery" << endl;
     cout << "4. Delete Grocery" << endl;
-    cout << "5. Exit the Program" << endl
-         << endl;
+    cout << "5. Exit the Program" << endl << endl;
 
     // Ask User for choice between 1 and 5
-    cout << endl
-         << "Choose a number between 1 and 5: ";
+    cout << "\nChoose a number between 1 and 5: ";
     cin >> choice;
 
-    // if User chooses 5, terminate
+    // if user chooses 5 or any other number, terminate
     if (choice != 1 && choice != 2 && choice != 3 && choice != 4)
     {
         cout << "Program closed.";
@@ -72,8 +66,10 @@ int main()
         int index;
         vector<string> v; //a vector that will hold the members of shared with
         string receipt, item, amount, payer, shared,time; // a string that hold the individuals tokens.
+        
         while (getline(file, receipt, '|') && getline(file, item, '|') &&
-               getline(file, amount, '|') && getline(file, payer, '|') && getline(file, shared, '|') && getline(file,time))
+               getline(file, amount, '|') && getline(file, payer, '|') && 
+               getline(file, shared, '|') && getline(file,time))
         {
             index = stoi(receipt);
             if (index > max_index)
