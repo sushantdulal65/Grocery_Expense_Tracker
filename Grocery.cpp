@@ -12,7 +12,8 @@ istream& operator>>(istream& strm, Grocery& obj)
     cout << "What is the amount spent on the grocery? ";
     strm >> obj.amount;
     cout << "What is the item name? ";
-    strm >> obj.item_name;
+    strm.ignore();
+    getline(strm, obj.item_name);
     cout << "Who paid for this item? ";
     strm >> obj.payer;
 

@@ -220,3 +220,9 @@ Wait a minute on that task. Something is wrong.
 For some reason, there was gapping problem in shared_with display which I resolved using include iomanip
 
 Another big problem, while I run displaygrocery, it adds the shared_with list with the list of people in previous receipts in every run. If I don't run displaygrocery, there is no such problem.
+
+Now I guess I need to change the approach of the problem. I find it difficult to see if the grocery exists or not without even going throughout the list. So, I plan to replace the receipt no with symbol number while also keeping the receipt no. So that symbol no will hold the new groceries in ascending order unless explicitly sorted maybe later on. I will also keep receipt no which would be used for searching from user interface. Symbol number only exists for programmer interface.
+
+What are the works I need to do?
+Change file writing technique, first list of the table should be S.N.
+

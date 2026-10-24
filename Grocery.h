@@ -14,7 +14,7 @@ using namespace std;
 
 class Grocery {
 private:
-    long int amount;
+    float amount;
     // stores the amount of particular item, for eg: 3 dollars, i will only enter 3 for this case
 
     string item_name;
@@ -40,7 +40,7 @@ private:
 
 public:
     // Constructor
-    Grocery(long int amt = 0, string item = "", string paidby = "",
+    Grocery(float amt = 0.0, string item = "", string paidby = "",
             vector<string> shared_w = {}, int receipt = 0)
         : amount(amt),
           item_name(item),
@@ -51,7 +51,7 @@ public:
     }
 
     // mutators or setters
-    void setAmount(long int amt)
+    void setAmount(float amt)
     {
         amount = amt;
     }
@@ -79,7 +79,7 @@ public:
     }
 
     // accessors or getters
-    long int getAmount() const
+    float getAmount() const
     {
         return amount;
     }

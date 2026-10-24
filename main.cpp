@@ -78,7 +78,7 @@ int main()
             split(shared,',',v);
             g[index].setReceiptNo(index);
             g[index].setItemName(item);
-            g[index].setAmount(stoi(amount));
+            g[index].setAmount(stof(amount));
             g[index].setPayer(payer);
             g[index].setSharedWith(v);
             g[index].setDateAdded(stoll(time));
@@ -103,7 +103,7 @@ int main()
             else
             {
                 cout << "The data already exists with such receipt no." << endl;
-                cout << "Please use editgrocery to edit existing grocery. " << endl;
+                cout << "Please use edit grocery to edit existing grocery. " << endl<< endl;
             }
         }
 
