@@ -1,0 +1,16 @@
+# Compiled programs and intermediate build files
+*.exe
+*.o
+*.obj
+*.out
+/build/
+/Debug/
+/Release/
+
+# IDE and operating-system files
+.vs/
+.vscode/*.log
+*.user
+*.suo
+Thumbs.db
+.DS_Store

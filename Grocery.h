@@ -1,56 +1,45 @@
 #ifndef GROCERY_H
 #define GROCERY_H
 
-// Author Sushant Dulal
-
-// header file for Grocery.h
-
 #include <chrono>
+#include <ctime>
 #include <iostream>
 #include <string>
 #include <vector>
 using namespace std;
 
-
+// Represents one grocery expense. SN is assigned in creation order; receipt_no
+// is separate information supplied by the user.
 class Grocery {
 private:
+    static unsigned int& serialCounter()
+    {
+        static unsigned int count = 0;
+        return count;
+    }
+    unsigned int sn;
     float amount;
-    // stores the amount of particular item, for eg: 3 dollars, i will only enter 3 for this case
-
     string item_name;
-    // stores the item that was bought, for eg: tomato
-
     string payer;
-    // stores the first name of person who paid for the grocery, for eg: sushant
-
     vector<string> shared_with;
-    // stores the vector of names of people who share this item, 
-    // for eg: roshan, aayush, but it doesn't include the payer
-
-    // picture i will figure out something later.
-
-    int receipt_no;
-    // stores the information about which number receipt is it so that it becomes 
-    // easier to search for the receipt
-    // Note: receipt_no acts like a primary key for this project, 
-    // it can't be duplicate, and its should be a positive non-zero number
-    
+    unsigned int receipt_no;
     chrono::system_clock::time_point date_added;
-    // stores the info about the time and date at which a particular grocery was first added. 
 
 public:
-    // Constructor
+    // A new grocery receives the next serial number. Copies retain their SN.
     Grocery(float amt = 0.0, string item = "", string paidby = "",
-            vector<string> shared_w = {}, int receipt = 0)
+            vector<string> shared_w = {}, unsigned int receipt = 0)
         : amount(amt),
           item_name(item),
           payer(paidby),
           shared_with(shared_w),
-          receipt_no(receipt)
+          receipt_no(receipt),
+          date_added()
     {
+        sn = ++serialCounter();
     }
 
-    // mutators or setters
+    // Setters used when loading a record from disk or updating an entry.
     void setAmount(float amt)
     {
         amount = amt;
@@ -69,7 +58,7 @@ public:
         shared_with = sharedw;
     }
     
-    void setReceiptNo(int no)
+    void setReceiptNo(unsigned int no)
     {
         receipt_no = no;
     }
@@ -78,10 +67,14 @@ public:
         date_added = chrono::system_clock::from_time_t(t);
     }
 
-    // accessors or getters
+    // Read-only accessors.
     float getAmount() const
     {
         return amount;
+    }
+    unsigned int getSN() const
+    {
+        return sn;
     }
     string getItemName() const
     {
@@ -93,7 +86,7 @@ public:
     }
 
     vector<string> getSharedWith() const { return shared_with; }
-    int getReceiptNo() const
+    unsigned int getReceiptNo() const
     {
         return receipt_no;
     }
@@ -101,12 +94,12 @@ public:
         return date_added;
     }
 
+    // Console operations for one grocery entry.
     void displayGrocery() const;
     void editGrocery();
-
-    // a function that allows the user to delete a particular grocery or entire grocery based on the requirement
     void deleteGrocery();
 
+    // Deleted entries are retained as empty slots so later SN values do not shift.
     bool isEmpty() const;
     friend istream& operator>>(istream&, Grocery&);
 };

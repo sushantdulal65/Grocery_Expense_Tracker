@@ -1,7 +1,11 @@
 
+#ifndef DEBT_H
+#define DEBT_H
+
 #include <string>
 using namespace std;
 
+// Describes a balance one person owes another.
 class Debt{
 private:
     string creditor;
@@ -41,3 +45,5 @@ public:
         
     }
 };
+
+#endif // DEBT_H

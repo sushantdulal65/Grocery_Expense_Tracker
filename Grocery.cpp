@@ -1,30 +1,31 @@
-// Author Sushant Dulal
-
-// implementation file for Grocery class
-
 #include <iostream>
 #include <iomanip>
+#include <limits>
 #include "Grocery.h"
 using namespace std;
 
-istream& operator>>(istream& strm, Grocery& obj) 
+// Read an expense from the selected input stream and timestamp it on entry.
+istream& operator>>(istream& strm, Grocery& obj)
 {
     cout << "What is the amount spent on the grocery? ";
     strm >> obj.amount;
     cout << "What is the item name? ";
-    strm.ignore();
+    strm.ignore(numeric_limits<streamsize>::max(), '\n');
     getline(strm, obj.item_name);
     cout << "Who paid for this item? ";
     strm >> obj.payer;
 
     int n;
     cout << "How many people will this transaction be shared with, excluding the payer? ";
-    strm >> n;
+    if (!(strm >> n) || n < 0)
+    {
+        strm.setstate(ios::failbit);
+        return strm;
+    }
 
     obj.shared_with.resize(n);
 
-    // check if the user chooses 0
-    if (n!=0)
+    if (n > 0)
         cout << "Enter the names of the people sharing this transaction, excluding the payer: ";
 
     for (int i = 0; i < n; i++)
@@ -35,8 +36,8 @@ istream& operator>>(istream& strm, Grocery& obj)
 }
 
 void Grocery::displayGrocery() const {
-    
     cout << "---------------------------------Display---------------------------------------" << endl;
+    cout << "SN: " << sn << endl;
     cout << "Receipt No: " << receipt_no << endl;
     cout << "Item: " << item_name << endl;
     cout << "Amount: " << amount << endl;
@@ -46,11 +47,12 @@ void Grocery::displayGrocery() const {
         cout << left<< setw(10) << person;
     cout << endl;
 
-    // Convert time_point to time_t, then to readable string
+    // Convert the stored clock value to a readable local date and time.
     time_t t = chrono::system_clock::to_time_t(date_added);
-    cout << "Date Added: " << ctime(&t) <<endl;
+    cout << "Date Added: " << ctime(&t) << endl;
 }
 
+// Prompt for changes to individual fields, leaving SN and date_added unchanged.
 void Grocery::editGrocery() {
     bool a;
     cout << "Current item name: " << item_name << endl;
@@ -59,7 +61,8 @@ void Grocery::editGrocery() {
     if (a)
     {
         cout << "What is the item name? ";
-        cin >> item_name;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        getline(cin, item_name);
     }
     cout << "Current Amount: " << amount << endl;
     cout << "Change amount? (0/1): ";
@@ -94,11 +97,12 @@ void Grocery::editGrocery() {
     }
 }
 
+// Mark the record as deleted; its vector slot and SN remain reserved.
 void Grocery::deleteGrocery() {
     receipt_no = 0;
 }
 
-// A function to check if a grocery is empty. Logic: empty grocery has receipt no. 0
+// Receipt number zero marks an unused or deleted slot.
 bool Grocery::isEmpty() const {
     return receipt_no == 0;
 }

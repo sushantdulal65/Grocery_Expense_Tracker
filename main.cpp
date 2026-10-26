@@ -1,250 +1,174 @@
 // Author Sushant Dulal
 
-// source file for Grocery class
-
-#include <iostream>
-#include <string>
 #include <fstream>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
 #include "Grocery.h"
 using namespace std;
 
-//******************************************************************************
-//* a function that will separate tokens from a string into a vector of string *
-//* s is the big string, delimiter is the character that separates the tokens, *
-//* tokens is the vector that will store individual tokens separately,         *
-//* for example: "Ram,Hari,Sita" --This whole string is s,',' is delimiter,and *
-//* Ram  Hari and Sita are the tokens.                                         *
-//******************************************************************************
+// Break one serialized field into its delimiter-separated values.
+static vector<string> split(const string& text, char delimiter)
+{
+    vector<string> parts;
+    string part;
+    stringstream stream(text);
+    while (getline(stream, part, delimiter))
+        parts.push_back(part);
+    return parts;
+}
 
-void split(const string& s, char delim, vector<string>& tokens);
+// Load both the current seven-field format and older six-field records.
+static void loadGroceries(vector<Grocery>& groceries)
+{
+    ifstream file("Grocery_Record.txt");
+    string line;
+
+    while (getline(file, line))
+    {
+        vector<string> fields = split(line, '|');
+        const bool hasSN = fields.size() == 7;
+        if ((!hasSN && fields.size() != 6) || fields.empty())
+            continue;
+
+        unsigned int sn = hasSN ? static_cast<unsigned int>(stoul(fields[0]))
+                                : static_cast<unsigned int>(groceries.size() + 1);
+        if (sn == 0)
+            continue;
+
+        // Grow through this SN so the vector index remains SN - 1, including gaps.
+        while (groceries.size() < sn)
+            groceries.emplace_back();
+
+        Grocery& grocery = groceries[sn - 1];
+        const size_t offset = hasSN ? 1 : 0;
+        grocery.setReceiptNo(stoi(fields[offset]));
+        grocery.setItemName(fields[offset + 1]);
+        grocery.setAmount(stof(fields[offset + 2]));
+        grocery.setPayer(fields[offset + 3]);
+        grocery.setSharedWith(split(fields[offset + 4], ','));
+        grocery.setDateAdded(stoll(fields[offset + 5]));
+    }
+}
+
+// Rewrite the file from memory when the user exits.
+static void saveGroceries(const vector<Grocery>& groceries)
+{
+    ofstream file("Grocery_Record.txt", ios::trunc);
+    for (const Grocery& grocery : groceries)
+    {
+        // Keep deleted rows so serial numbers remain stable across restarts.
+        string combinedNames;
+        for (const string& person : grocery.getSharedWith())
+        {
+            if (!combinedNames.empty())
+                combinedNames += ',';
+            combinedNames += person;
+        }
+
+        file << grocery.getSN() << '|' << grocery.getReceiptNo() << '|'
+             << grocery.getItemName() << '|' << grocery.getAmount() << '|'
+             << grocery.getPayer() << '|' << combinedNames << '|'
+             << chrono::system_clock::to_time_t(grocery.getDateAdded()) << '\n';
+    }
+}
 
 int main()
 {
-
-    int choice;        // A Variable that asks user to choose between 4 choices in the program     
-
-    // Welcome Screen
-    cout << "Welcome to Grocery Expense Tracker.\n\n";
-
-    // Choices Display for User
-    cout << "--------------------Choices-----------------------------------" << endl;
-    cout << "1. Grocery Entry" << endl;
-    cout << "2. Grocery Display" << endl;
-    cout << "3. Edit Grocery" << endl;
-    cout << "4. Delete Grocery" << endl;
-    cout << "5. Exit the Program" << endl << endl;
-
-    // Ask User for choice between 1 and 5
-    cout << "\nChoose a number between 1 and 5: ";
-    cin >> choice;
-
-    // if user chooses 5 or any other number, terminate
-    if (choice != 1 && choice != 2 && choice != 3 && choice != 4)
-    {
-        cout << "Program closed.";
-        return 0;
-    }
-
-    // initialization of array of grocery objects
-    Grocery g[100];
-
-    // initialization of file stream
-    fstream file;
-
-    int i; // Array index
-
-    // an index to denote the maximum receipt number either from file or user input
-    // used to indicate a stop position while displaying from index 0 until max_index
-    int max_index = 0;
-
-    // OPENING AN EXISTING FILE TO GET THE RECORD FROM THE PREVIOUS INPUTS
-    file.open("Grocery_Record.txt", ios::in);
-
-    // Checking if file opens or not
-    if (file)
-    {
-        int index;
-        vector<string> v; //a vector that will hold the members of shared with
-        string receipt, item, amount, payer, shared,time; // a string that hold the individuals tokens.
-        
-        while (getline(file, receipt, '|') && getline(file, item, '|') &&
-               getline(file, amount, '|') && getline(file, payer, '|') && 
-               getline(file, shared, '|') && getline(file,time))
-        {
-            index = stoi(receipt);
-            if (index > max_index)
-                max_index = index;
-            
-            split(shared,',',v);
-            g[index].setReceiptNo(index);
-            g[index].setItemName(item);
-            g[index].setAmount(stof(amount));
-            g[index].setPayer(payer);
-            g[index].setSharedWith(v);
-            g[index].setDateAdded(stoll(time));
-        }
-    }
-    file.close();
+    // Only create Grocery objects as records are loaded or added.
+    vector<Grocery> groceries;
+    loadGroceries(groceries);
 
     while (true)
     {
+        int choice;
+        cout << "Welcome to Grocery Expense Tracker.\n\n"
+             << "--------------------Choices-----------------------------------\n"
+             << "1. Grocery Entry\n"
+             << "2. Grocery Display\n"
+             << "3. Edit Grocery\n"
+             << "4. Delete Grocery\n"
+             << "5. Exit the Program\n\n"
+             << "Choose a number between 1 and 5: ";
+        if (!(cin >> choice))
+            return 1;
 
         if (choice == 1)
         {
+            groceries.emplace_back();
+            Grocery& grocery = groceries.back();
+            cout << "Serial number assigned: " << grocery.getSN() << endl;
             cout << "What is the receipt no: ";
-            cin >> i;
-            if (g[i].isEmpty())
-            {
-                g[i].setReceiptNo(i);
-                if (i > max_index)
-                    max_index = i;
-                cin >> g[i];
-            }
-            else
-            {
-                cout << "The data already exists with such receipt no." << endl;
-                cout << "Please use edit grocery to edit existing grocery. " << endl<< endl;
-            }
+            int receipt;
+            cin >> receipt;
+            grocery.setReceiptNo(receipt);
+            cin >> grocery;
         }
-
         else if (choice == 2)
         {
-            int ch;
-            cout << "Do you want to display whole list(1) or a particular receipt.(0)" << endl;
-            cin >> ch;
-            if (ch == 1)
+            int displayAll;
+            cout << "Display whole list (1) or a particular serial number (0)? ";
+            cin >> displayAll;
+            if (displayAll)
             {
-                for (int i = 1; i <= max_index; i++)
-                {
-                    if (!g[i].isEmpty())
-                        g[i].displayGrocery();
-                }
+                for (const Grocery& grocery : groceries)
+                    if (!grocery.isEmpty())
+                        grocery.displayGrocery();
             }
             else
             {
-                cout << "Which grocery do you want to display? Enter the receipt no.";
-                cin >> i;
-                if (!g[i].isEmpty())
-                    g[i].displayGrocery();
+                unsigned int sn;
+                cout << "Which serial number do you want to display? ";
+                cin >> sn;
+                if (sn > 0 && sn <= groceries.size() && !groceries[sn - 1].isEmpty())
+                    groceries[sn - 1].displayGrocery();
                 else
-                    cout << "Grocery doesn't exist. Back to choices again." << endl;
+                    cout << "Grocery doesn't exist.\n";
             }
         }
-
         else if (choice == 3)
         {
-            cout << "Which grocery do you want to edit? Enter the receipt no.";
-            cin >> i;
-            if (!g[i].isEmpty())
-                g[i].editGrocery();
+            unsigned int sn;
+            cout << "Which serial number do you want to edit? ";
+            cin >> sn;
+            if (sn > 0 && sn <= groceries.size() && !groceries[sn - 1].isEmpty())
+                groceries[sn - 1].editGrocery();
             else
-                cout << "Grocery doesn't exist. Back to choices again." << endl;
+                cout << "Grocery doesn't exist.\n";
         }
-
         else if (choice == 4)
         {
-            int ch;
-            cout << "Do you want to delete whole list(1) or a particular grocery.(0)" << endl;
-            cin >> ch;
-            if (ch == 1)
+            int deleteAll;
+            cout << "Delete whole list (1) or a particular serial number (0)? ";
+            cin >> deleteAll;
+            if (deleteAll)
             {
-                for (int i = 1; i <= max_index; i++)
-                {
-                    if (!g[i].isEmpty())
-                        g[i].deleteGrocery();
-                }
+                for (Grocery& grocery : groceries)
+                    if (!grocery.isEmpty())
+                        grocery.deleteGrocery();
             }
             else
             {
-                cout << "Which grocery do you want to delete? Enter the receipt no.";
-                cin >> i;
-                if (!g[i].isEmpty())
+                unsigned int sn;
+                cout << "Which serial number do you want to delete? ";
+                cin >> sn;
+                if (sn > 0 && sn <= groceries.size() && !groceries[sn - 1].isEmpty())
                 {
-                    g[i].deleteGrocery();
-                    cout << "Grocery deleted successfully." << endl;
+                    groceries[sn - 1].deleteGrocery();
+                    cout << "Grocery deleted successfully.\n";
                 }
                 else
-                    cout << "Grocery doesn't exist. Back to choices again." << endl;
+                    cout << "Grocery doesn't exist.\n";
             }
         }
         else if (choice == 5)
         {
-            // OPENING FILE AS A OPEN MODE TO MAKE EDITS IN THE PROGRAM AFTER THE PROGRAM RUNS
-            file.open("Grocery_Record.txt", ios::out);
-            for (i = 1; i <= max_index; i++)
-            {
-                if (!g[i].isEmpty())
-                {
-                    string combined_names = "";
-                    //converting those vectors to string split with comma
-                    for(string s: g[i].getSharedWith())
-                    {   
-                        if(combined_names=="")
-                            {combined_names+=s;
-                            continue;}
-                        combined_names = combined_names + ","+s;
-                    }
-                    file << g[i].getReceiptNo() << "|" << g[i].getItemName() << "|" << g[i].getAmount() << "|"
-                         << g[i].getPayer() << "|" << combined_names <<"|" << chrono::system_clock::to_time_t(g[i].getDateAdded()) << endl;
-                }
-            }
+            saveGroceries(groceries);
             cout << "Program closed.";
-            break;
+            return 0;
         }
-
-        cout << "--------------------Choices-----------------------------------" << endl;
-        cout << "1. Grocery Entry" << endl;
-        cout << "2. Grocery Display" << endl;
-        cout << "3. Edit Grocery" << endl;
-        cout << "4. Delete Grocery" << endl;
-        cout << "5. Exit the Program" << endl
-             << endl;
-        cout << endl
-             << "Choose a number between 1 and 5: ";
-        cin >> choice;
+        else
+            cout << "Choose a number between 1 and 5.\n";
     }
-    // is there a way i could store this whole array into a file, and load the array at the beginning in a append or input mode
-    file.close();
-    return 0;
-}
-
-void split(const string& s, char delim, vector<string>& tokens)
-{
-    int tokenStart = 0; // Starting position of the next token
-
-    //Find the first occurence of the delimiter.
-    int delimPosition = s.find(delim);
-
-    // While we haven't run out of delimiters...
-    while(delimPosition != string::npos)
-    {
-        //Extract the token.
-        string tok = s.substr(tokenStart, delimPosition - tokenStart);
-
-        //Push the token onto the tokens vector.
-        tokens.push_back(tok);
-
-        //Move delimPosition to the next character position.
-        delimPosition++;
-
-        //Move tokenStart to delmiPosition.
-        tokenStart = delimPosition;
-
-        //Find the next occurence of the delimiter.
-        delimPosition = s.find(delim,delimPosition);
-
-
-        //if no more delimiters, extract the last token.
-        if(delimPosition == string::npos)
-        {
-            //Extract the token.
-            string tok = s.substr(tokenStart, delimPosition - tokenStart);
-
-            //Push the token onto the vector.
-            tokens.push_back(tok);
-        }
-
-    }
-
-
 }
